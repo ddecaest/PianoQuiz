@@ -86,7 +86,7 @@ class PianoApp : Application() {
 
     private fun createBlackButton(i: Int, matchingWhiteButton: Button): Button {
         val blackButton = Button(listOfAllKeys[i])
-        blackButton.style = "-fx-base: black; -fx-font-size: 10px"
+        blackButton.style = "-fx-base: black; -fx-font-size: 10px; -fx-text-fill: transparent;"
         blackButton.prefWidth = 60.0
         blackButton.prefHeight = 120.0
         blackButton.setOnMouseClicked { handlePianoButtonClicked(blackButton) }
@@ -101,7 +101,7 @@ class PianoApp : Application() {
 
     private fun createWhitePianoButton(i: Int, whiteKeysPane: Pane): Button {
         val whiteButton = Button(listOfAllKeys[i])
-        whiteButton.style = "-fx-base: white; -fx-padding: 55 0 0 0;"
+        whiteButton.style = "-fx-base: white; -fx-padding: 55 0 0 0; -fx-text-fill: transparent;"
         whiteButton.prefWidth = 80.0
         whiteButton.prefHeight = 180.0
         whiteButton.setOnMouseClicked { handlePianoButtonClicked(whiteButton) }
