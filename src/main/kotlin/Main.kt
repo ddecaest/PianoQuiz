@@ -1,3 +1,5 @@
+import PianoKeyButtonFactory.createBlackButton
+import PianoKeyButtonFactory.createWhitePianoButton
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
@@ -34,32 +36,17 @@ class PianoApp : Application() {
         root.spacing = 25.0
         root.padding = Insets(10.0)
 
-        val selectionPanel = createSelectionPanel()
-        root.children.add(selectionPanel)
+        val introductorySelectionPanel = IntroductorySelectionPanelFactory.createSelectionPanel(
+            onKeyPracticeButtonClicked = { showPianoPane() },
+            onMusicNotationPracticeButtonClicked = { this.primaryStage.close() },
+            onExitButtonClicked = { this.primaryStage.close() }
+        )
+        root.children.add(introductorySelectionPanel)
 
         val scene = Scene(root, 600.0, 400.0)
         primaryStage.scene = scene
 
         primaryStage.show()
-    }
-
-    private fun createSelectionPanel(): VBox {
-        val selectionPanel = VBox()
-        selectionPanel.alignment = Pos.CENTER
-        selectionPanel.spacing = 25.0
-
-        val pianoButton = Button("Play Piano")
-        pianoButton.setOnMouseClicked {
-            showPianoPane()
-        }
-
-        val exitButton = Button("Exit")
-        exitButton.setOnMouseClicked {
-            primaryStage.close()
-        }
-
-        selectionPanel.children.addAll(pianoButton, exitButton)
-        return selectionPanel
     }
 
     private fun showPianoPane() {
@@ -84,7 +71,7 @@ class PianoApp : Application() {
                 continue
             }
 
-            val whiteButton = createWhitePianoButton(i, whiteKeysPane)
+            val whiteButton = createWhitePianoButton(i, whiteKeysPane, ::handlePianoButtonClicked)
             whiteKeysPane.children.add(whiteButton)
             whiteButtons.add(whiteButton)
         }
@@ -96,7 +83,7 @@ class PianoApp : Application() {
             }
 
             val matchingWhiteButton = whiteButtons.find { listOfAllKeys[i].contains(it.text) }!!
-            val blackButton = createBlackButton(i, matchingWhiteButton)
+            val blackButton = createBlackButton(i, matchingWhiteButton, ::handlePianoButtonClicked)
             blackKeysPane.children.add(blackButton)
         }
 
@@ -132,31 +119,6 @@ class PianoApp : Application() {
 
         buttonPanel.children.addAll(startButton, keyToPressIndicatorButton, correctCounterButton, wrongCounterButton)
         return buttonPanel
-    }
-
-    private fun createBlackButton(i: Int, matchingWhiteButton: Button): Button {
-        val blackButton = Button(listOfAllKeys[i])
-        blackButton.style = "-fx-base: black; -fx-font-size: 10px; -fx-text-fill: transparent;"
-        blackButton.prefWidth = 60.0
-        blackButton.prefHeight = 120.0
-        blackButton.setOnMouseClicked { handlePianoButtonClicked(blackButton) }
-        blackButton.translateXProperty()
-            .bind(
-                matchingWhiteButton.layoutXProperty()
-                    .add(matchingWhiteButton.widthProperty())
-                    .subtract(blackButton.prefWidth / 2)
-            )
-        return blackButton
-    }
-
-    private fun createWhitePianoButton(i: Int, whiteKeysPane: Pane): Button {
-        val whiteButton = Button(listOfAllKeys[i])
-        whiteButton.style = "-fx-base: white; -fx-padding: 55 0 0 0; -fx-text-fill: transparent;"
-        whiteButton.prefWidth = 80.0
-        whiteButton.prefHeight = 180.0
-        whiteButton.setOnMouseClicked { handlePianoButtonClicked(whiteButton) }
-        whiteButton.layoutXProperty().bind(whiteKeysPane.layoutXProperty().add(i * 80))
-        return whiteButton
     }
 
     private fun handlePianoButtonClicked(button: Button) {
