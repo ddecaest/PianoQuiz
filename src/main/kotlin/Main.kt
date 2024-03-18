@@ -1,3 +1,4 @@
+import introduction.IntroductorySelectionPanel
 import javafx.application.Application
 import javafx.application.Application.launch
 import javafx.geometry.Insets
@@ -18,7 +19,7 @@ class PianoApp : Application() {
         root.spacing = 25.0
         root.padding = Insets(10.0)
 
-        val introductorySelectionPanel = IntroductorySelectionPanelFactory.createSelectionPanel(
+        val introductorySelectionPanel = IntroductorySelectionPanel.createSelectionPanel(
             onKeyPracticeButtonClicked = { createAndShowKeyPracticeScreen() },
             onMusicNotationPracticeButtonClicked = { createAndShowMusicNotationPracticeScreen() },
             onExitButtonClicked = { this.primaryStage.close() }
