@@ -16,6 +16,8 @@ import kotlin.random.Random
 
 class PianoApp : Application() {
 
+    private lateinit var primaryStage: Stage
+
     private val keyToPressIndicatorButton = Button("< PRESS START >")
     private val correctCounterButton = Button("CORRECT: 0")
     private val wrongCounterButton = Button("WRONG: 0")
@@ -25,29 +27,53 @@ class PianoApp : Application() {
     )
 
     override fun start(primaryStage: Stage) {
+        this.primaryStage = primaryStage
         primaryStage.title = "Piano App"
 
         val root = VBox()
         root.spacing = 25.0
         root.padding = Insets(10.0)
 
-        // Top Panel with Piano Layout
-        val pianoPanel = createPianoLayout()
-
-        // Bottom Panel with Buttons
-        val buttonPanel = HBox()
-        buttonPanel.alignment = Pos.BOTTOM_CENTER
-        buttonPanel.spacing = 25.0
-        buttonPanel.style = "-fx-border-color: black; -fx-border-width: 2px;"
-        createButtonPanel(buttonPanel)
-
-        root.children.addAll(pianoPanel, buttonPanel)
-        VBox.setVgrow(pianoPanel, Priority.ALWAYS)
+        val selectionPanel = createSelectionPanel()
+        root.children.add(selectionPanel)
 
         val scene = Scene(root, 600.0, 400.0)
         primaryStage.scene = scene
 
         primaryStage.show()
+    }
+
+    private fun createSelectionPanel(): VBox {
+        val selectionPanel = VBox()
+        selectionPanel.alignment = Pos.CENTER
+        selectionPanel.spacing = 25.0
+
+        val pianoButton = Button("Play Piano")
+        pianoButton.setOnMouseClicked {
+            showPianoPane()
+        }
+
+        val exitButton = Button("Exit")
+        exitButton.setOnMouseClicked {
+            primaryStage.close()
+        }
+
+        selectionPanel.children.addAll(pianoButton, exitButton)
+        return selectionPanel
+    }
+
+    private fun showPianoPane() {
+        val root = primaryStage.scene.root as VBox
+
+        // Top Panel with Piano Layout
+        val pianoPanel = createPianoLayout()
+        VBox.setVgrow(pianoPanel, Priority.ALWAYS)
+
+        // Bottom Panel with Buttons
+        val buttonPanel = creatButtonPanel()
+
+        root.children.clear()
+        root.children.addAll(pianoPanel, buttonPanel)
     }
 
     private fun createPianoLayout(): StackPane {
@@ -82,6 +108,30 @@ class PianoApp : Application() {
         stack.alignment = Pos.CENTER
         stack.children.addAll(whiteKeysPane, blackKeysPane);
         return stack
+    }
+
+    private fun creatButtonPanel(): HBox {
+        val buttonPanel = HBox()
+        buttonPanel.alignment = Pos.BOTTOM_CENTER
+        buttonPanel.spacing = 25.0
+        buttonPanel.style = "-fx-border-color: black; -fx-border-width: 2px;"
+
+        keyToPressIndicatorButton.prefWidth = 125.0
+        keyToPressIndicatorButton.style = "-fx-background-color: transparent; -fx-border-width: 0;"
+        correctCounterButton.prefWidth = 125.0
+        correctCounterButton.style = "-fx-background-color: transparent; -fx-border-width: 0;"
+        wrongCounterButton.prefWidth = 125.0
+        wrongCounterButton.style = "-fx-background-color: transparent; -fx-border-width: 0;"
+
+        val startButton = Button("Start")
+        startButton.setOnMouseClicked {
+            correctCounterButton.text = "CORRECT: 0"
+            wrongCounterButton.text = "WRONG: 0"
+            rollNextKey()
+        }
+
+        buttonPanel.children.addAll(startButton, keyToPressIndicatorButton, correctCounterButton, wrongCounterButton)
+        return buttonPanel
     }
 
     private fun createBlackButton(i: Int, matchingWhiteButton: Button): Button {
@@ -128,27 +178,6 @@ class PianoApp : Application() {
         }
     }
 
-    private fun createButtonPanel(buttonPanel: HBox) {
-        keyToPressIndicatorButton.prefWidth = 125.0
-        keyToPressIndicatorButton.style = "-fx-background-color: transparent; -fx-border-width: 0;";
-
-        correctCounterButton.prefWidth = 125.0
-        correctCounterButton.style = "-fx-background-color: transparent; -fx-border-width: 0;";
-
-        wrongCounterButton.prefWidth = 125.0
-        wrongCounterButton.style = "-fx-background-color: transparent; -fx-border-width: 0;";
-
-        val startButton = Button("Start")
-
-        startButton.setOnMouseClicked {
-            correctCounterButton.text = "CORRECT: 0"
-            wrongCounterButton.text = "WRONG: 0"
-            rollNextKey()
-        }
-
-        buttonPanel.children.addAll(startButton, keyToPressIndicatorButton, correctCounterButton, wrongCounterButton)
-    }
-
     private fun rollNextKey() {
         val nextKey = listOfAllKeys[Random.nextInt(listOfAllKeys.size)]
         keyToPressIndicatorButton.text = nextKey
@@ -158,7 +187,13 @@ class PianoApp : Application() {
         val originalBackground = button.background
 
         val timeline = Timeline(
-            KeyFrame(Duration.ZERO, KeyValue(button.backgroundProperty(), Background(BackgroundFill(blinkColour, CornerRadii.EMPTY, Insets.EMPTY)))),
+            KeyFrame(
+                Duration.ZERO,
+                KeyValue(
+                    button.backgroundProperty(),
+                    Background(BackgroundFill(blinkColour, CornerRadii.EMPTY, Insets.EMPTY))
+                )
+            ),
             KeyFrame(Duration.seconds(0.5), KeyValue(button.backgroundProperty(), originalBackground))
         )
         timeline.play()
