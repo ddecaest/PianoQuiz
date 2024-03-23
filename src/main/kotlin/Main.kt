@@ -5,6 +5,7 @@ import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
+import musicnotationpractice.MusicNotationPracticePanel
 import pianokeypractice.PianoKeyPracticePanel
 
 class PianoApp : Application() {
@@ -36,8 +37,8 @@ class PianoApp : Application() {
     }
 
     private fun createAndShowMusicNotationPracticeScreen() {
-        // TODO
-        this.primaryStage.close()
+        val root = primaryStage.scene.root as VBox
+        MusicNotationPracticePanel.createAndShow(root)
     }
 }
 
