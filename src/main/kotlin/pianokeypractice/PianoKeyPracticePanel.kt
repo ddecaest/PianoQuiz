@@ -112,7 +112,10 @@ object PianoKeyPracticePanel {
     }
 
     private fun rollNextKey() {
-        val nextKey = listOfAllKeys[Random.nextInt(listOfAllKeys.size)]
+        var nextKey = keyToPressIndicatorButton.text
+        while (nextKey != keyToPressIndicatorButton.text) {
+            nextKey = listOfAllKeys[Random.nextInt(listOfAllKeys.size)]
+        }
         keyToPressIndicatorButton.text = nextKey
     }
 
