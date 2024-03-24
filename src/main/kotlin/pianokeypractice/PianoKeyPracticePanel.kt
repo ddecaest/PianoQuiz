@@ -1,14 +1,10 @@
 package pianokeypractice
 
-import javafx.animation.KeyFrame
-import javafx.animation.KeyValue
-import javafx.animation.Timeline
-import javafx.geometry.Insets
+import Util
 import javafx.geometry.Pos
 import javafx.scene.control.Button
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import javafx.util.Duration
 import pianokeypractice.PianoKeyButtonFactory.createBlackButton
 import pianokeypractice.PianoKeyButtonFactory.createWhitePianoButton
 import kotlin.random.Random
@@ -99,15 +95,15 @@ object PianoKeyPracticePanel {
         if (keyToPressIndicatorButton.text == button.text) {
             val split = correctCounterButton.text.split(" ")
             correctCounterButton.text = split[0] + " " + (split[1].toInt() + 1).toString()
-            blinkButton(button, Color.GREEN)
-            blinkButton(correctCounterButton, Color.GREEN)
+            Util.blinkButton(button, Color.GREEN)
+            Util.blinkButton(correctCounterButton, Color.GREEN)
             rollNextKey()
 
         } else {
             val split = wrongCounterButton.text.split(" ")
             wrongCounterButton.text = split[0] + " " + (split[1].toInt() + 1).toString()
-            blinkButton(button, Color.RED)
-            blinkButton(wrongCounterButton, Color.RED)
+            Util.blinkButton(button, Color.RED)
+            Util.blinkButton(wrongCounterButton, Color.RED)
         }
     }
 
@@ -117,21 +113,5 @@ object PianoKeyPracticePanel {
             nextKey = listOfAllKeys[Random.nextInt(listOfAllKeys.size)]
         }
         keyToPressIndicatorButton.text = nextKey
-    }
-
-    private fun blinkButton(button: Button, blinkColour: Color) {
-        val originalBackground = button.background
-
-        val timeline = Timeline(
-            KeyFrame(
-                Duration.ZERO,
-                KeyValue(
-                    button.backgroundProperty(),
-                    Background(BackgroundFill(blinkColour, CornerRadii.EMPTY, Insets.EMPTY))
-                )
-            ),
-            KeyFrame(Duration.seconds(0.5), KeyValue(button.backgroundProperty(), originalBackground))
-        )
-        timeline.play()
     }
 }
