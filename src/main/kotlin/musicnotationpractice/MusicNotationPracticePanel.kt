@@ -26,7 +26,8 @@ object MusicNotationPracticePanel {
     private lateinit var musicStaff: Pane
     private val staffLines = mutableListOf<Line>()
 
-    private val notes = listOf("C", "D", "E", "F", "G", "A", "B", "C", "D", "E", "F", "G", "A")
+    // From top of the music staff to bottom
+    private val notes = listOf("A", "G", "F", "E", "D", "C", "B", "A", "G", "F", "E", "D", "C")
 
     private var lastNote: Note? = null
 
@@ -107,7 +108,6 @@ object MusicNotationPracticePanel {
 
         noteInput.setOnKeyPressed {
             try {
-                // TODO this doesn't quite work
                 if (startButton.text != "Let's go!" || !it.text.matches(validUserInputRegex)) {
                     return@setOnKeyPressed
                 }
@@ -136,6 +136,7 @@ object MusicNotationPracticePanel {
 
         val nextNoteIndex = Random.nextInt(notes.size)
         val nextNoteName = notes[nextNoteIndex]
+        println(nextNoteName)
 
         val yPosition = if (nextNoteIndex % 2 == 0) {
             staffLines[nextNoteIndex / 2].startYProperty().get()
@@ -145,19 +146,25 @@ object MusicNotationPracticePanel {
             (lineAbove + lineBelow) / 2
         }
 
-        lastNote = Note(createMusicNote(yPosition), nextNoteName)
+        lastNote = Note(createMusicNote(nextNoteIndex, yPosition), nextNoteName)
         musicStaff.children.addAll(lastNote!!.graphicalElements)
     }
 
-    private fun createMusicNote(yPosition: Double): List<Shape> {
-        // Add line in case the note falls outside the staff: if it doesn't, it will overlap and not show up
-        val line = Line((MUSIC_STAFF_WIDTH / 2) - 10, yPosition, (MUSIC_STAFF_WIDTH / 2) + 10, yPosition)
-        line.stroke = Color.BLACK
-        line.strokeWidth = 2.0
+    private fun createMusicNote(nextNoteIndex: Int, yPosition: Double): List<Shape> {
+        val shapesInNote = mutableListOf<Shape>()
+
+        if(nextNoteIndex == 0 || nextNoteIndex == notes.size - 1) {
+            // Add line in case the note falls outside the staff: if it doesn't, it will overlap and not show up
+            val line = Line((MUSIC_STAFF_WIDTH / 2) - 10, yPosition, (MUSIC_STAFF_WIDTH / 2) + 10, yPosition)
+            line.stroke = Color.BLACK
+            line.strokeWidth = 2.0
+            shapesInNote.add(line)
+        }
 
         val noteCircle = Circle(MUSIC_STAFF_WIDTH / 2, yPosition, 7.0)
         noteCircle.fill = Color.RED
+        shapesInNote.add(noteCircle)
 
-        return listOf(noteCircle, line)
+        return shapesInNote
     }
 }
