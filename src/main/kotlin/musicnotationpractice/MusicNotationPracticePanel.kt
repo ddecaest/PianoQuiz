@@ -31,7 +31,7 @@ object MusicNotationPracticePanel {
 
     private var lastNote: Note? = null
 
-    data class Note(var graphicalElements: List<Node>, val noteName: String)
+    data class Note(var graphicalElements: List<Node>, val noteIndex: Int, val noteName: String)
 
     fun createAndShow(root: VBox) {
         val (musicStaffPane, staffLinesCreated) = createMusicStaff()
@@ -134,20 +134,23 @@ object MusicNotationPracticePanel {
     private fun rollNextNote() {
         lastNote?.let { musicStaff.children.removeAll(it.graphicalElements) }
 
-        val nextNoteIndex = Random.nextInt(notes.size)
-        val nextNoteName = notes[nextNoteIndex]
-        println(nextNoteName)
+        var nextNoteIndex = lastNote?.noteIndex
+        while(nextNoteIndex == lastNote?.noteIndex) {
+            nextNoteIndex = Random.nextInt(notes.size)
+            val nextNoteName = notes[nextNoteIndex]
 
-        val yPosition = if (nextNoteIndex % 2 == 0) {
-            staffLines[nextNoteIndex / 2].startYProperty().get()
-        } else {
-            val lineAbove = staffLines[nextNoteIndex / 2].startYProperty().get()
-            val lineBelow = staffLines[(nextNoteIndex / 2) + 1].startYProperty().get()
-            (lineAbove + lineBelow) / 2
+            val yPosition = if (nextNoteIndex % 2 == 0) {
+                staffLines[nextNoteIndex / 2].startYProperty().get()
+            } else {
+                val lineAbove = staffLines[nextNoteIndex / 2].startYProperty().get()
+                val lineBelow = staffLines[(nextNoteIndex / 2) + 1].startYProperty().get()
+                (lineAbove + lineBelow) / 2
+            }
+
+            val graphicalElements = createMusicNote(nextNoteIndex, yPosition)
+            lastNote = Note(graphicalElements, nextNoteIndex, nextNoteName)
+            musicStaff.children.addAll(lastNote!!.graphicalElements)
         }
-
-        lastNote = Note(createMusicNote(nextNoteIndex, yPosition), nextNoteName)
-        musicStaff.children.addAll(lastNote!!.graphicalElements)
     }
 
     private fun createMusicNote(nextNoteIndex: Int, yPosition: Double): List<Shape> {
