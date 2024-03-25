@@ -137,20 +137,20 @@ object MusicNotationPracticePanel {
         var nextNoteIndex = lastNote?.noteIndex
         while(nextNoteIndex == lastNote?.noteIndex) {
             nextNoteIndex = Random.nextInt(notes.size)
-            val nextNoteName = notes[nextNoteIndex]
-
-            val yPosition = if (nextNoteIndex % 2 == 0) {
-                staffLines[nextNoteIndex / 2].startYProperty().get()
-            } else {
-                val lineAbove = staffLines[nextNoteIndex / 2].startYProperty().get()
-                val lineBelow = staffLines[(nextNoteIndex / 2) + 1].startYProperty().get()
-                (lineAbove + lineBelow) / 2
-            }
-
-            val graphicalElements = createMusicNote(nextNoteIndex, yPosition)
-            lastNote = Note(graphicalElements, nextNoteIndex, nextNoteName)
-            musicStaff.children.addAll(lastNote!!.graphicalElements)
         }
+
+        val nextNoteName = notes[nextNoteIndex!!]
+        val yPosition = if (nextNoteIndex % 2 == 0) {
+            staffLines[nextNoteIndex / 2].startYProperty().get()
+        } else {
+            val lineAbove = staffLines[nextNoteIndex / 2].startYProperty().get()
+            val lineBelow = staffLines[(nextNoteIndex / 2) + 1].startYProperty().get()
+            (lineAbove + lineBelow) / 2
+        }
+
+        val graphicalElements = createMusicNote(nextNoteIndex, yPosition)
+        lastNote = Note(graphicalElements, nextNoteIndex, nextNoteName)
+        musicStaff.children.addAll(lastNote!!.graphicalElements)
     }
 
     private fun createMusicNote(nextNoteIndex: Int, yPosition: Double): List<Shape> {
